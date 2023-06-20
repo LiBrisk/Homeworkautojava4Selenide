@@ -23,7 +23,7 @@ public class TestServiceCreditCard {
         $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Забронировать")).click();
         $(byText("Успешно!")).shouldBe(visible, Duration.ofMillis(15000));
-        $(".notification__content").shouldHave(text("Встреча успешно забронирована на " + LocalDate.now().plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+        $(".notification__content").shouldHave(text("Встреча успешно забронирована на " + date));
 
     }
 }
