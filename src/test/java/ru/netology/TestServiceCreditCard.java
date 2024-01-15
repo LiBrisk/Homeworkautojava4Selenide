@@ -1,5 +1,6 @@
 package ru.netology;
 
+import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -27,7 +28,9 @@ public class TestServiceCreditCard {
     @Test
     void shouldRegistrationHappyTest() {
         $("[data-test-id='city'] input ").setValue("Краснодар");
-        $("[data-test-id=‘date’] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $x("//*[@class='menu-item__control']").click();
+        $("[data-test-id='date'] input ").click();
+        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         $("[data-test-id='date'] input ").setValue(generateDate(7, "dd.MM.yyyy"));
         $("[data-test-id='name'] input ").setValue("Иванов Иван");
         $("[data-test-id='phone'] input ").setValue("+79998885555");
@@ -38,10 +41,11 @@ public class TestServiceCreditCard {
     }
 
     @Test
-    void shouldChoiseFirstCity() {
+    void shouldChooseFirstCity() {
         $("[data-test-id='city'] input").setValue("Красно");
         $$(".menu-item__control").first().click();
-        $("[data-test-id=‘date’] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("[data-test-id='date'] input ").click();
+        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         $("[data-test-id='date'] input ").setValue(generateDate(7, "dd.MM.yyyy"));
         $("[data-test-id='name'] input ").setValue("Иванов Иван");
         $("[data-test-id='phone'] input ").setValue("+79998885555");
@@ -52,7 +56,7 @@ public class TestServiceCreditCard {
     }
 
     @Test
-    void shouldChoiseFirstCity1() {
+    void shouldChooseFirstCity1() {
         $("[data-test-id='city'] input").setValue("Красно");
         $$(".menu-item__control").first().click();
         $("[data-test-id='date'] input ").click();
@@ -63,6 +67,21 @@ public class TestServiceCreditCard {
         $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Забронировать")).click();
         $(byText("Успешно!")).shouldBe(visible, Duration.ofMillis(15000));
-        $(".notification__content").shouldHave(text("Встреча успешно забронирована на " + generateDate(7, "dd.MM.yyyy")));
+        $(".notification__content").shouldHave(text("Встреча успешно забронирована на " + generateDate(3, "dd.MM.yyyy")));
+    }
+
+    @Test
+    void shouldChooseCityWithByTwoLetter() {
+        $("[data-test-id='city'] input").setValue("Кр");
+        $$(".menu-item__control").findBy(Condition.text("Краснодар")).click();
+        $("[data-test-id='date'] input ").click();
+        $(".calendar__layout").shouldBe(visible);
+        $(".calendar__layout .calendar__day").click();
+        $("[data-test-id='name'] input ").setValue("Иванов Иван");
+        $("[data-test-id='phone'] input ").setValue("+79998885555");
+        $("[data-test-id='agreement']").click();
+        $$("button").find(exactText("Забронировать")).click();
+        $(byText("Успешно!")).shouldBe(visible, Duration.ofMillis(15000));
+        $(".notification__content").shouldHave(text("Встреча успешно забронирована на " + generateDate(3, "dd.MM.yyyy")));
     }
 }
